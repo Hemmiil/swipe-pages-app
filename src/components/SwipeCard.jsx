@@ -29,6 +29,8 @@ export default function SwipeCard({ image, onSwipe, active, depth }) {
       }}
     >
       <img src={image.src} alt={`card ${image.id}`} draggable="false" />
+      {/* ログテーブルの fileName 列と突き合わせるためのファイル名表示 */}
+      <span className="card-filename">{image.name}</span>
       {active && (
         <>
           <motion.div className="badge badge-like" style={{ opacity: likeOpacity }}>LIKE</motion.div>

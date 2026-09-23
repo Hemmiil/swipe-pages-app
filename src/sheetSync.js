@@ -35,20 +35,32 @@ async function postEntry(entry) {
   });
 }
 
+// 送信ループの二重起動を防ぐフラグ。
+// 高速スワイプで flushQueue が重なると、両方が同じ先頭要素を
+// 送ってしまい重複行になるため、常に1本だけ走らせる。
+let flushing = false;
+
 // 溜まっているキューを先頭から順に送信する。
 // ネットワーク失敗時は中断し、残りは次回に持ち越す。
 export async function flushQueue() {
   if (!GAS_URL) return;
-  let queue = loadQueue();
-  while (queue.length > 0) {
-    try {
-      await postEntry(queue[0]);
-    } catch {
-      // 送信失敗。キューは減らさず次回リトライ。
-      return;
+  if (flushing) return; // 既に送信ループが走っているので任せる。
+  flushing = true;
+  try {
+    let queue = loadQueue();
+    while (queue.length > 0) {
+      try {
+        await postEntry(queue[0]);
+      } catch {
+        // 送信失敗。キューは減らさず次回リトライ。
+        return;
+      }
+      // 送信中に追加された分も拾えるよう、毎回 storage から読み直す。
+      queue = loadQueue().slice(1);
+      saveQueue(queue);
     }
-    queue = loadQueue().slice(1);
-    saveQueue(queue);
+  } finally {
+    flushing = false;
   }
 }
 
