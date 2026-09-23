@@ -20,11 +20,16 @@ function saveQueue(queue) {
   localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
 }
 
-// 1件送信する。text/plain にすることで CORS プリフライトを避ける
-// （Apps Script 側は e.postData.contents を JSON.parse する）。
+// 1件送信する。
+// - text/plain にすることで CORS プリフライトを避ける（Apps Script 側は
+//   e.postData.contents を JSON.parse する）。
+// - mode: "no-cors" で「撃ちっぱなし」にする。応答は読まない（不透明）ため
+//   CORS 読み取り失敗による誤リトライ（＝重複行）を防げる。
+//   ネットワーク不通のときは fetch が reject するので、その場合だけ再送される。
 async function postEntry(entry) {
   await fetch(GAS_URL, {
     method: "POST",
+    mode: "no-cors",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify(entry),
   });
