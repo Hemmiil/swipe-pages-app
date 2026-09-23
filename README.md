@@ -20,12 +20,13 @@ swipe-pages-app/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml
+├── public/
+│   └── images/
 ├── src/
 │   ├── components/
 │   │   ├── ActionButtons.jsx
 │   │   ├── CardStack.jsx
 │   │   └── SwipeCard.jsx
-│   ├── images/
 │   ├── App.css
 │   ├── App.jsx
 │   ├── data.js
@@ -39,14 +40,17 @@ swipe-pages-app/
 
 ## 1. 画像を配置
 
-`src/images/` に表示したい画像を置くだけです。`src/data.js` が `import.meta.glob` で
-ビルド時に自動収集するため、ファイル名の列挙は不要です（追加・削除がそのまま反映されます）。
+`public/images/` に表示したい画像を置くだけです。`vite.config.js` の仮想モジュール
+（`virtual:image-list`）がビルド/起動時に `public/images` を走査して一覧を供給するため、
+ファイル名の列挙は不要です（追加・削除がそのまま反映されます）。
 
 - 対応拡張子: `png` / `jpg` / `jpeg` / `webp` / `gif` / `svg`
 - 表示順はファイル名の昇順
-- 現在は `ofuro_sauna_neppashi_man.png` と `ofuro_sauna_neppashi_woman.png` の2枚
+- **ファイル名に日本語・空白・記号（`#` や `?` を含む）を使っても動作します**
 
-画像URLは Vite が `base`（`vite.config.js`）付きのハッシュ化パスへ自動解決するため、
+画像は `public` 配下（Rollup のモジュールグラフ外）に置くため、`import.meta.glob` の
+制約（`#` / `?` を含む名前でビルドが壊れる）を受けません。URL は `base`（`vite.config.js`）
+付きで実行時に組み立て、`encodeURIComponent` で1文字ずつ安全にエスケープするため、
 `base` を変更してもパスの手動修正は不要です。
 
 ## 2. ローカル起動
