@@ -64,6 +64,11 @@ export async function flushQueue() {
   }
 }
 
+// 未送信の再送キューを空にする（リセット用）。
+export function clearQueue() {
+  localStorage.removeItem(QUEUE_KEY);
+}
+
 // 1件をキューへ追加し、その場で送信を試みる。
 export async function syncEntry(entry) {
   if (!GAS_URL) return;

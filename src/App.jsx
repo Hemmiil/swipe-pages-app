@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { images } from "./data";
 import CardStack from "./components/CardStack";
 import ActionButtons from "./components/ActionButtons";
-import { syncEntry, flushQueue } from "./sheetSync";
+import { syncEntry, flushQueue, clearQueue } from "./sheetSync";
 
 // ファイル名をキーに like/unlike ラベルを保管する。
 // 形式: { "001.png": { reaction: "like" | "unlike", createdAt: ISO文字列 } }
@@ -45,6 +45,8 @@ export default function App() {
   const reset = () => {
     setLabels({});
     localStorage.removeItem(STORAGE_KEY);
+    // 未送信の再送キューも消して完全リセットする。
+    clearQueue();
   };
 
   if (pending.length === 0) {
