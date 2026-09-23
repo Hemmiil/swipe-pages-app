@@ -29,6 +29,10 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          # スプレッドシート送信先URL。リポジトリの Variables に VITE_GAS_URL を登録する。
+          # 未設定でもビルドは成功し、その場合はクラウド送信が無効になる。
+          VITE_GAS_URL: ${{ vars.VITE_GAS_URL }}
       - name: Setup Pages
         uses: actions/configure-pages@v6
         with:

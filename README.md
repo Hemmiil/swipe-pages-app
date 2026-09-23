@@ -84,13 +84,36 @@ https://<GitHubユーザー名>.github.io/swipe-pages-app/
 
 ## データ保存
 
-Like / Unlike の結果はブラウザの `localStorage` に保存されます。
+Like / Unlike の結果はまずブラウザの `localStorage`（キー `swipe-labels`）に保存されます。
+ファイル名をキーにした次の形式で、ラベル済み画像は再表示されません。
+
+```json
+{
+  "001.png": { "reaction": "like",   "createdAt": "2026-09-23T..." },
+  "002.png": { "reaction": "unlike", "createdAt": "2026-09-23T..." }
+}
+```
 
 - ローカルPCを起動しておく必要はありません
-- サーバー側DBは不要です
 - 同じブラウザでは再読み込み後も結果が残ります
-- 別端末とは結果を共有しません
-- ブラウザデータを削除すると結果も消えます
+- ブラウザデータを削除すると `localStorage` 側の結果は消えます
+
+### クラウド保存（Google スプレッドシート）
+
+環境変数 `VITE_GAS_URL` を設定すると、スワイプのたびに Google スプレッドシートへ
+ログを追記します（`fileName` / `reaction` / `createdAt`）。別端末とも共有でき、
+送信に失敗した分は `localStorage` のキュー（`swipe-sync-queue`）に溜め、次回自動で再送します。
+
+セットアップ:
+
+1. `google-apps-script/Code.gs` をスプレッドシートの Apps Script に貼り付け、
+   「ウェブアプリ」としてデプロイする（詳細はファイル冒頭のコメント参照）。
+2. 発行された URL を環境変数に設定する。
+   - ローカル: `.env.example` を `.env` にコピーして `VITE_GAS_URL` を設定
+   - 本番(GitHub Pages): リポジトリの `Settings → Secrets and variables → Actions → Variables`
+     に `VITE_GAS_URL` を登録（`deploy.yml` がビルド時に注入）
+
+`VITE_GAS_URL` 未設定でもアプリは動作し、その場合は `localStorage` のみで保存します。
 
 ## 操作
 

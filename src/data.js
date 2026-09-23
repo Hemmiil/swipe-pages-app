@@ -7,6 +7,10 @@ const modules = import.meta.glob("./images/*.png", {
 });
 
 // パスでソートして表示順を安定させる。
+// name（ファイル名）を like/unlike ログのキー兼 React の key として使う。
 export const images = Object.keys(modules)
   .sort()
-  .map((path, i) => ({ id: i + 1, src: modules[path] }));
+  .map((path) => {
+    const name = path.split("/").pop();
+    return { id: name, name, src: modules[path] };
+  });
