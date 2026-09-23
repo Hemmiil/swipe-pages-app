@@ -1,13 +1,12 @@
-// public/images/ に配置した画像ファイル名を列挙する。
-// 画像を追加・削除したら、この配列を更新する。
-const files = [
-  "ofuro_sauna_neppashi_man.png",
-  "ofuro_sauna_neppashi_woman.png",
-];
+// src/images/ に置いた画像をビルド時に自動収集する。
+// 画像を追加・削除したらファイルを置くだけで一覧へ反映される（ファイル名のハードコード不要）。
+// Vite が base 付きのハッシュ化URLへ解決するため、パスの手動組み立ても不要。
+const modules = import.meta.glob("./images/*.{png,jpg,jpeg,webp,gif,svg}", {
+  eager: true,
+  import: "default",
+});
 
-// BASE_URL は vite.config.js の base 設定（例: /swipe-pages-app/）を参照する。
-// これにより base を変更してもパスの修正はここで不要になる。
-export const images = files.map((file, i) => ({
-  id: i + 1,
-  src: `${import.meta.env.BASE_URL}images/${file}`,
-}));
+// パスでソートして表示順を安定させる。
+export const images = Object.keys(modules)
+  .sort()
+  .map((path, i) => ({ id: i + 1, src: modules[path] }));

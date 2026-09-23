@@ -20,13 +20,12 @@ swipe-pages-app/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml
-├── public/
-│   └── images/
 ├── src/
 │   ├── components/
 │   │   ├── ActionButtons.jsx
 │   │   ├── CardStack.jsx
 │   │   └── SwipeCard.jsx
+│   ├── images/
 │   ├── App.css
 │   ├── App.jsx
 │   ├── data.js
@@ -40,16 +39,15 @@ swipe-pages-app/
 
 ## 1. 画像を配置
 
-`public/images/` に表示したい画像を置き、`src/data.js` の `files` 配列にファイル名を列挙します。
-現在は以下の2枚を登録しています。
+`src/images/` に表示したい画像を置くだけです。`src/data.js` が `import.meta.glob` で
+ビルド時に自動収集するため、ファイル名の列挙は不要です（追加・削除がそのまま反映されます）。
 
-```text
-ofuro_sauna_neppashi_man.png
-ofuro_sauna_neppashi_woman.png
-```
+- 対応拡張子: `png` / `jpg` / `jpeg` / `webp` / `gif` / `svg`
+- 表示順はファイル名の昇順
+- 現在は `ofuro_sauna_neppashi_man.png` と `ofuro_sauna_neppashi_woman.png` の2枚
 
-画像パスは `import.meta.env.BASE_URL`（= `vite.config.js` の `base`）を基準に組み立てるため、
-`base` を変更してもファイル名の列挙以外の修正は不要です。
+画像URLは Vite が `base`（`vite.config.js`）付きのハッシュ化パスへ自動解決するため、
+`base` を変更してもパスの手動修正は不要です。
 
 ## 2. ローカル起動
 
